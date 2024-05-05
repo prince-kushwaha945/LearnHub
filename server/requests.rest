@@ -1,0 +1,43 @@
+# POST http://localhost:3000/signin 
+# Content-Type: application/json
+
+# {
+#     "email": "namdevdeepak451@gmail.com",
+#     "password": "Deepak@2003"
+# }
+
+#  "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY1ZmZmZTI2MTY3M2U4NWNjNDc2ODY5NSIsImlhdCI6MTcxMTI3NTU1OH0.HM5BrHLPvPDT-TIQNp5ibH3UdXqfeQbPRXfxMMe9hjY"
+# POST http://localhost:3000/signup
+# Content-Type: application/json
+
+# {
+#     "fullname": "john",
+#     "email": "johan2@gmail.com",
+#     "password": "John@123"
+# # }
+# POST  http://localhost:3000/get-blog
+# Content-Type: application/json
+
+# {
+#     "blog_id": "What-is-JavaScript-Hello-World-Program-in-JavaScriptntK3ZMAa0JSOw3lAx4RwS"
+# }
+
+# POST  http://localhost:3000/change-password
+# Content-Type: application/json
+# Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY2MTUxYjMwYTQ4Zjc1ZGRmZmRjYzU2MCIsImlhdCI6MTcxMzg2MzM2NH0.s5GD_jO6zdJWgt9sXH3l4Ky9978QkZO7ilpoGQhTRV4
+
+# {
+#     "currentPassword": "Amt@2004",
+#     "newPassword": "Amit@2003"
+# }
+
+POST  http://localhost:3000/user-written-blogs
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY2MTU1ZGEyNjczOWE1MmQ1ZTYyODQxYiIsImlhdCI6MTcxNDkwNDkwM30.pTvF_zr3UOPhrd55XamziaFkWZYJTaUrThB-5wJswnU
+
+{
+    "page": "1",
+    "draft": "false"
+}
+
+
