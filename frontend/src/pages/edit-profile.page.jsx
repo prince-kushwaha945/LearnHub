@@ -7,16 +7,18 @@ import Loader from "../components/loader.component";
 import toast, { Toaster } from "react-hot-toast";
 import InputBox from "../components/input.component";
 import { UploadImage } from "../common/aws";
+import { storeInSession } from "../common/session";
 
 const EditeProflie = () => {
   let {
     userAuth,
-    userAuth: { access_token },
+    userAuth: { access_token }, setUserAuth
   } = useContext(UserContext);
 
   let bioLimit = 150;
 
   let profileImgEle = useRef();
+  let editProflieForm = useRef();
 
   const [profile, setProfile] = useState(profileDataStructure);
   const [loading, setLoading] = useState(true);
@@ -77,7 +79,32 @@ const EditeProflie = () => {
 
       UploadImage(updatedProfileImg)
       .then(url => {
-        console.log(url)
+        if(url) {
+          axios
+          .post(import.meta.env.VITE_SERVER_DOMAIN + "/update-profile-img", {url}, {
+            headers: {
+              'Authorization': `Bearer ${access_token}`
+            }
+          })
+          .then(({ data }) => {
+            let newUserAuth = { ...userAuth, profile_img: data.profile_img} 
+
+            storeInSession("user", JSON.stringify(newUserAuth));
+            setUserAuth(newUserAuth)
+
+            setUpdatedProfileImg(null)
+
+            toast.dismiss(loadingToast)
+            e.target.removeAttribute("disabled")
+            toast.success("Uploaded 👍")
+
+          })
+          .catch(({ response }) => {
+            toast.dismiss(loadingToast)
+            e.target.removeAttribute("disabled")
+            toast.error(response.data.error)
+          })
+        }
       })
       .catch(err => {
         console.log(err)
@@ -86,13 +113,35 @@ const EditeProflie = () => {
     }
   }
 
+  const handleSubmit = (e) => {
+    e.preventDefault();
+
+    let form = new FormData(editProflieForm.current);
+    let formData = { };
+
+    for( let [key, value ] of form.entries()){
+      formData[key] = value;
+    }
+
+    let { username, bio, youtube, facebook, github, instagram, website } = formData;
+
+    if(username.length < 3 ) {
+      return toast.error("Username should be at least 3 letters long ")
+    }
+
+    if(bio.length < bioLimit ) {
+      return toast.error(`Bio should not be more than  ${bioLimit}`)
+    }
+
+  }
+
 
   return (
     <AnimationWrapper>
       {loading ? (
         <Loader />
       ) : (
-        <form>
+        <form ref={editProflieForm}>
           <Toaster />
 
           <h1 className="max-md:hidden">Edite profile</h1>
@@ -157,7 +206,7 @@ const EditeProflie = () => {
                 }
               </div>
 
-              <button className="btn-dark w-auto px-10">Update</button>
+              <button  className="btn-dark w-auto px-10" type="submit" onClick={handleSubmit}>Update</button>
 
             </div>
           </div>

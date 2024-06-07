@@ -31,13 +31,13 @@
 #     "newPassword": "Amit@2003"
 # }
 
-POST  http://localhost:3000/user-written-blogs
-Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY2MTU1ZGEyNjczOWE1MmQ1ZTYyODQxYiIsImlhdCI6MTcxNDkwNDkwM30.pTvF_zr3UOPhrd55XamziaFkWZYJTaUrThB-5wJswnU
+# POST  http://localhost:3000/user-written-blogs
+# Content-Type: application/json
+# Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY2MTU1ZGEyNjczOWE1MmQ1ZTYyODQxYiIsImlhdCI6MTcxNDkwNDkwM30.pTvF_zr3UOPhrd55XamziaFkWZYJTaUrThB-5wJswnU
 
-{
-    "page": "1",
-    "draft": "false"
-}
+# {
+#     "page": "1",
+#     "draft": "false"
+# }
 
-
+GET  http://localhost:3000/get-upload-url

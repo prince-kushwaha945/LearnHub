@@ -6,6 +6,9 @@ import { Toaster } from "react-hot-toast";
 import InPageNavigation from "../components/inpage-navigation.component";
 import Loader from "../components/loader.component";
 import NoDataMessage from "../components/nodata.component";
+import AnimationWrapper from "../common/page-animation";
+import {ManagePublishedBlogCard, ManageDraftBlogPost} from "../components/manage-blogcard.component";
+import LoadMoreDataBtn from "../components/load-more.component";
 
 const ManageBlogs = () => {
   const [blogs, setBlogs] = useState(null);
@@ -96,25 +99,50 @@ const ManageBlogs = () => {
 
       <InPageNavigation routes={["published Blogs", "Drafts"]}>
 
-        { //published blog
 
-            blogs == null ? <Loader /> : 
-            blogs.results.length ? 
+        {
+          //published blog
+
+          blogs == null ? (
+            <Loader />
+          ) : blogs.results.length ? (
             <>
-            {
-                
-            }
-            </>
+              {blogs.results.map((blog, i) => {
+                return (
+                  <AnimationWrapper key={i} transition={{ delay: i * 0.04 }}>
+                    <ManagePublishedBlogCard blog={{ ...blog, index: i, setStateFuc: setBlogs }} />
+                  </AnimationWrapper>
+                );
+              })}
 
-            : <NoDataMessage message="No published blogs" />
+              {/* <LoadMoreDataBtn state={blogs} fetchDataFun={getBlogs} additionalParam={{draft: false, deletedDocCount: blogs.deletedDocCount}} /> */}
+
+            </>
+          ) : (
+            <NoDataMessage message="No published blogs" />
+          )
         }
 
-        <h1>This is Draft blog</h1>
+        {
+          //Draft blogs
 
+          drafts == null ? (
+            <Loader />
+          ) : drafts.results.length ? (
+            <>
+              {drafts.results.map((blog, i) => {
+                return (
+                  <AnimationWrapper key={i} transition={{ delay: i * 0.04 }}>
+                    <ManageDraftBlogPost blog={{ ...blog, index: i, setStateFuc: setDrafts }} />
+                  </AnimationWrapper>
+                );
+              })}
+            </>
+          ) : (
+            <NoDataMessage message="No draft blogs" />
+          )
+        }
       </InPageNavigation>
-
-
-
     </>
   );
 };
