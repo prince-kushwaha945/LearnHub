@@ -18,13 +18,14 @@ const HomePage = ( ) => {
 
   let categories = [
     "Programming",
+    "jobs",
     "chatgpt",
     "instagram",
     "Social media",
     "excel",
     "tech",
     "youtube",
-    "java",
+
   ];
 
   const fetchLatesBlogs = ({ page = 1 }) => {

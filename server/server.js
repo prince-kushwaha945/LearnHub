@@ -459,7 +459,7 @@ server.post('/update-profile', verifyJWT, (req, res) => {
         return res.status(403).json({ error: "Username should be at least 3 letters long " })
     }
 
-    if (bio.length < bioLimit) {
+    if (bio.length > bioLimit) {
         return res.status(403).json({ error: `Bio should not be more than  ${bioLimit} characters` })
     }
 

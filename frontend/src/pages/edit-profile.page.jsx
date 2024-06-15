@@ -12,7 +12,8 @@ import { storeInSession } from "../common/session";
 const EditeProflie = () => {
   let {
     userAuth,
-    userAuth: { access_token }, setUserAuth
+    userAuth: { access_token },
+    setUserAuth,
   } = useContext(UserContext);
 
   let bioLimit = 150;
@@ -25,7 +26,7 @@ const EditeProflie = () => {
 
   const [charactersLeft, setCharactersLeft] = useState(bioLimit);
 
-  const [ updatedProfileImg, setUpdatedProfileImg] = useState(null);
+  const [updatedProfileImg, setUpdatedProfileImg] = useState(null);
 
   let {
     personal_info: {
@@ -54,87 +55,132 @@ const EditeProflie = () => {
     }
   }, [access_token]);
 
-
   const handleCharaterChange = (e) => {
-    setCharactersLeft( bioLimit - e.target.value.length)
-  }
-
+    setCharactersLeft(bioLimit - e.target.value.length);
+  };
 
   const handleImagePreview = (e) => {
     let img = e.target.files[0];
 
     profileImgEle.current.src = URL.createObjectURL(img);
 
-    setUpdatedProfileImg(img)
-  }
+    setUpdatedProfileImg(img);
+  };
 
   const handleImageUpload = (e) => {
-
     e.preventDefault();
 
-    if(updatedProfileImg) {
-      let loadingToast = toast.loading("Uploading....")
+    if (updatedProfileImg) {
+      let loadingToast = toast.loading("Uploading....");
 
-      e.target.setAttribute("disabled", true)
+      e.target.setAttribute("disabled", true);
 
       UploadImage(updatedProfileImg)
-      .then(url => {
-        if(url) {
-          axios
-          .post(import.meta.env.VITE_SERVER_DOMAIN + "/update-profile-img", {url}, {
-            headers: {
-              'Authorization': `Bearer ${access_token}`
-            }
-          })
-          .then(({ data }) => {
-            let newUserAuth = { ...userAuth, profile_img: data.profile_img} 
+        .then((url) => {
+          if (url) {
+            axios
+              .post(
+                import.meta.env.VITE_SERVER_DOMAIN + "/update-profile-img",
+                { url },
+                {
+                  headers: {
+                    Authorization: `Bearer ${access_token}`,
+                  },
+                }
+              )
+              .then(({ data }) => {
+                let newUserAuth = {
+                  ...userAuth,
+                  profile_img: data.profile_img,
+                };
 
-            storeInSession("user", JSON.stringify(newUserAuth));
-            setUserAuth(newUserAuth)
+                storeInSession("user", JSON.stringify(newUserAuth));
+                setUserAuth(newUserAuth);
 
-            setUpdatedProfileImg(null)
+                setUpdatedProfileImg(null);
 
-            toast.dismiss(loadingToast)
-            e.target.removeAttribute("disabled")
-            toast.success("Uploaded 👍")
-
-          })
-          .catch(({ response }) => {
-            toast.dismiss(loadingToast)
-            e.target.removeAttribute("disabled")
-            toast.error(response.data.error)
-          })
-        }
-      })
-      .catch(err => {
-        console.log(err)
-      })
-
+                toast.dismiss(loadingToast);
+                e.target.removeAttribute("disabled");
+                toast.success("Uploaded 👍");
+              })
+              .catch(({ response }) => {
+                toast.dismiss(loadingToast);
+                e.target.removeAttribute("disabled");
+                toast.error(response.data.error);
+              });
+          }
+        })
+        .catch((err) => {
+          console.log(err);
+        });
     }
-  }
+  };
 
   const handleSubmit = (e) => {
     e.preventDefault();
 
     let form = new FormData(editProflieForm.current);
-    let formData = { };
+    let formData = {};
 
-    for( let [key, value ] of form.entries()){
+    for (let [key, value] of form.entries()) {
       formData[key] = value;
     }
 
-    let { username, bio, youtube, facebook, github, instagram, website } = formData;
+    let { username, bio, youtube, facebook, github, instagram, website, twitter } =
+      formData;
 
-    if(username.length < 3 ) {
-      return toast.error("Username should be at least 3 letters long ")
+    if (username.length < 3) {
+      return toast.error("Username should be at least 3 letters long ");
     }
 
-    if(bio.length < bioLimit ) {
-      return toast.error(`Bio should not be more than  ${bioLimit}`)
+    if (bio.length > bioLimit) {
+      return toast.error(`Bio should not be more than  ${bioLimit}`);
     }
 
-  }
+    let loadingToast = toast.loading("Updating....");
+    e.target.setAttribute("disabled", true);
 
+    axios.post(
+      import.meta.env.VITE_SERVER_DOMAIN + "/update-profile",
+      {
+        username,
+        bio,
+        social_links: {
+          youtube,
+          facebook,
+          twitter,
+          github,
+          instagram,
+          website,
+        },
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${access_token}`,
+        },
+      })
+      .then(({ data }) => {
+
+        if(userAuth.username != data.username) {
+
+          let newUserAuth =  { ...userAuth, username: data.username };
+
+          storeInSession("user", JSON.stringify(newUserAuth));
+
+
+        }
+
+        toast.dismiss(loadingToast)
+        e.target.removeAttribute("disabled")
+        toast.success("Profile Uploaded 👍")
+
+      })
+      .catch(({ response }) => {
+        toast.dismiss(loadingToast)
+        e.target.removeAttribute("disabled")
+        toast.error(response.data.error)
+      })
+    }
 
   return (
     <AnimationWrapper>
@@ -167,56 +213,103 @@ const EditeProflie = () => {
                 onChange={handleImagePreview}
               />
 
-              <button className="btn-light mt-5 max-lg:center lg:w-full px-10" onClick={handleImageUpload}>
+              <button
+                className="btn-light mt-5 max-lg:center lg:w-full px-10"
+                onClick={handleImageUpload}
+              >
                 Upload
               </button>
             </div>
 
             <div className="w-full">
-
               <div className=" grid grid-cols-1 md:grid-cols-2 md:gap-5">
                 <div>
-                  <InputBox name="fullname" type='text' value={fullname} placeholder="full Name" disable={true} icon="fi-rr-user" />
+                  <InputBox
+                    name="fullname"
+                    type="text"
+                    value={fullname}
+                    placeholder="full Name"
+                    disable={true}
+                    icon="fi-rr-user"
+                  />
                 </div>
 
                 <div>
-                  <InputBox name="email" type='email' value={email} placeholder="Email" disable={true} icon="fi-rr-envelope" />
+                  <InputBox
+                    name="email"
+                    type="email"
+                    value={email}
+                    placeholder="Email"
+                    disable={true}
+                    icon="fi-rr-envelope"
+                  />
                 </div>
               </div>
 
-              <InputBox name="username" type='text' value={profile_username} placeholder="Username"  icon="fi-rr-at" />
+              <InputBox
+                name="username"
+                type="text"
+                value={profile_username}
+                placeholder="Username"
+                icon="fi-rr-at"
+              />
 
-              <p className=" text-dark-grey -mt-3">Username will use to search user and will be visible to all users </p>
+              <p className=" text-dark-grey -mt-3">
+                Username will use to search user and will be visible to all
+                users{" "}
+              </p>
 
-              <textarea name="bio" maxLength={bioLimit} defaultValue={bio} placeholder="Bio" className="input-box h-64 lg:h-40 resize-none leading-7 mt-5 pl-5" onChange={handleCharaterChange} ></textarea>
+              <textarea
+                name="bio"
+                maxLength={bioLimit}
+                defaultValue={bio}
+                placeholder="Bio"
+                className="input-box h-64 lg:h-40 resize-none leading-7 mt-5 pl-5"
+                onChange={handleCharaterChange}
+              ></textarea>
 
-              <p className="mt-1 text-dark-grey"> { charactersLeft } characters left</p>
+              <p className="mt-1 text-dark-grey">
+                {" "}
+                {charactersLeft} characters left
+              </p>
 
-              <p className="my-6 text-dark-grey">Add your social handles below </p>
+              <p className="my-6 text-dark-grey">
+                Add your social handles below{" "}
+              </p>
 
               <div className=" md:grid md:grid-cols-2 gap-x-6">
+                {Object.keys(social_links).map((key, i) => {
+                  let link = social_links[key];
 
-                {
-                  Object.keys(social_links).map((key, i) => {
-
-                    let link = social_links[key]
-
-                    return <InputBox key={i} name={key} type="text" value={link} placeholder="https://" icon={"fi " + (key != 'website' ? "fi-brands-" + key : "fi-br-globe") } />
-                  })
-                }
+                  return (
+                    <InputBox
+                      key={i}
+                      name={key}
+                      type="text"
+                      value={link}
+                      placeholder="https://"
+                      icon={
+                        "fi " +
+                        (key != "website" ? "fi-brands-" + key : "fi-br-globe")
+                      }
+                    />
+                  );
+                })}
               </div>
 
-              <button  className="btn-dark w-auto px-10" type="submit" onClick={handleSubmit}>Update</button>
-
+              <button
+                className="btn-dark w-auto px-10"
+                type="submit"
+                onClick={handleSubmit}
+              >
+                Update
+              </button>
             </div>
           </div>
         </form>
       )}
-      
     </AnimationWrapper>
   );
 };
 
 export default EditeProflie;
-
-
