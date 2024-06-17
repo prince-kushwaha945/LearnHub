@@ -1,8 +1,10 @@
 import { useContext, useEffect } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
-import logo from "../imgs/logo.png";
+import lightLogo from "../imgs/logo-light.png";
+import darkLogo from "../imgs/logo-dark.png";
 import AnimationWrapper from "../common/page-animation";
-import defaultBanner from "../imgs/blog banner.png";
+import lightBanner from "../imgs/blog banner light.png";
+import darkBanner from "../imgs/blog banner dark.png";
 import { UploadImage } from "../common/aws";
 
 import { Toaster, toast } from "react-hot-toast";
@@ -11,7 +13,7 @@ import { EditorContext } from "../pages/editor.pages";
 import EditorJs from "@editorjs/editorjs";
 import { tools } from "./tools.component";
 import axios from "axios";
-import { UserContext } from "../App";
+import { ThemeContext, UserContext } from "../App";
 
 const BlogEditor = () => {
   let {
@@ -26,6 +28,8 @@ const BlogEditor = () => {
   let { userAuth: { access_token }} = useContext(UserContext);
 
   let { blog_id} = useParams();
+
+  let { theme} = useContext(ThemeContext);
 
   let navigate = useNavigate();
 
@@ -80,7 +84,7 @@ const BlogEditor = () => {
   const handleError = (e) => {
     let img = e.target;
 
-    img.src = defaultBanner;
+    img.src =  theme == "light" ? lightBanner : darkBanner ;
   };
 
   const handlePubishEvent = () => {
@@ -148,7 +152,7 @@ const BlogEditor = () => {
           toast.success("Saved 👍");
   
           setTimeout(() => {
-            navigate("/");
+            navigate("/dashboard/blogs?tab=draft");
           }, 500);
         })
         .catch(({ response }) => {
@@ -166,7 +170,7 @@ const BlogEditor = () => {
     <>
       <nav className="navbar">
         <Link to="/">
-          <img src={logo} alt="logo" className="flex-none w-10" />
+          <img src={ theme == "light" ? darkLogo : lightLogo } alt="logo" className="flex-none w-10" />
         </Link>
 
         <p className="max-md:hidden text-black line-clamp-1 w-full ">
@@ -208,7 +212,7 @@ const BlogEditor = () => {
             <textarea
               defaultValue={title}
               placeholder="Blog Title"
-              className="text-4xl font-medium w-full h-20 outline-none resize-none mt-10 leading-tight placeholder:opacity-40"
+              className="text-4xl font-medium w-full h-20 outline-none resize-none mt-10 leading-tight placeholder:opacity-40 bg-white"
               onKeyDown={handleTitleKeyDown}
               onChange={handleTitleChange}
             ></textarea>

@@ -101,13 +101,9 @@ export const ManageDraftBlogPost = ({ blog }) => {
 
 const deleteBlog = ( blog, access_token, target) => {
 
-  let { index, blog_id, setStateFuc } = blog;
+  let { index, blog_id, setStateFunc } = blog;
 
   target.setAttribute("disabled", true);
-
-  if(!deleteDocCount) {
-    deleteDocCount = 0;
-  }
 
   axios
       .post(
@@ -123,16 +119,20 @@ const deleteBlog = ( blog, access_token, target) => {
         
         target.removeAttribute("disabled");
 
-        setStateFuc(preVal => {
-          let { deleteDocCount, totalDocs, results } = preVal;
+        setStateFunc(preVal => {
+          let { deletedDocCount, totalDocs, results } = preVal;
 
           results.splice(index, 1);
+
+          if(!deletedDocCount) {
+            deletedDocCount = 0;
+          }
 
           if(!results.length && totalDocs -1 > 0 ) {
             return null;
           }
 
-          return { ...preVal, totalDocs: totalDocs - 1, deleteDocCount: deleteDocCount + 1}
+          return { ...preVal, totalDocs: totalDocs - 1, deleteDocCount: deletedDocCount + 1}
 
         })
 

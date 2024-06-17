@@ -106,7 +106,7 @@ const publishBlog = (e) =>{
     toast.success("Published 👍")
 
     setTimeout(() =>{
-      navigate("/")
+      navigate("/dashboard/blogs")
     }, 500)
 
   })

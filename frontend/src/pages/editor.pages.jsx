@@ -5,6 +5,7 @@ import BlogEditor from "../components/blog-editor.component";
 import PublishFrom from "../components/publish-form.component";
 import Loader from "../components/loader.component";
 import axios from "axios";
+import PageNoteFound from "./404.page";
 
 const blogStructure = {
   title: "",
@@ -23,7 +24,7 @@ const Editor = () => {
   const [blog, setBlog] = useState(blogStructure);
 
   let {
-    userAuth: { access_token },
+    userAuth: { access_token, isAdmin },
   } = useContext(UserContext);
 
   const [editorState, setEditorState] = useState("editor");
@@ -63,7 +64,10 @@ const Editor = () => {
         setTextEditor,
       }}
     >
-      {access_token === null ? (
+      {
+        !isAdmin ? <Navigate to="/404" /> :
+      
+      access_token === null ? (
         <Navigate to="/signin" />
       ) : loading ? (
         <Loader />
