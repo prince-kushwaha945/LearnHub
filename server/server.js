@@ -24,7 +24,7 @@ let PORT = 3000;
 
 server.use(cors (
     {
-        origin: ["https://deploy.mern-lwhq.vercel.app"],
+        origin: ["https://learnhub-fontend.vercel.app/"],
         methods: ["POST", "GET"],
         credentials: true
     }
