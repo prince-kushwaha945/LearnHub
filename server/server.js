@@ -12,7 +12,6 @@ import aws from "aws-sdk"
 
 import { UserInfo, getAuth } from "firebase-admin/auth"
 
-
 import User from "./Schema/User.js";
 import Blog from "./Schema/Blog.js"
 import Notification from "./Schema/Notification.js"
@@ -20,15 +19,7 @@ import Comment from "./Schema/Comment.js"
 import { populate } from "dotenv";
 
 const server = express();
-let PORT = 3000;
-
-server.use(cors (
-    {
-        origin: ["https://learnhub-black.vercel.app"],
-        methods: ["POST", "GET"],
-        credentials: true
-    }
-));
+let PORT = process.env.PORT || 3000;
 
 admin.initializeApp({
     credential: admin.credential.cert(serviceAccountKey)
@@ -1017,8 +1008,6 @@ server.post("/delete-blog", verifyJWT, (req, res) => {
 
     }
 })
-
-
 
 
 server.listen(PORT, () => {
