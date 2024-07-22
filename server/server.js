@@ -22,6 +22,14 @@ import { populate } from "dotenv";
 const server = express();
 let PORT = 3000;
 
+server.use(cors (
+    {
+        origin: ["https://deploy.mern-lwhq.vercel.app"],
+        methods: ["POST", "GET"],
+        credentials: true
+    }
+));
+
 admin.initializeApp({
     credential: admin.credential.cert(serviceAccountKey)
 })
